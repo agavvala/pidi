@@ -1,6 +1,35 @@
 import firebase from './firebase.js';
 
 class PidiWebServices {
+
+    // get random word meanings
+    // skipIndex - will avoid words that have been seen
+    getChoices(howMany, allWords, skipIndex) {
+        var collectedSoFar = 0;
+        var choices = new Array();
+
+        while (collectedSoFar < howMany) {
+            var randomIndex = Math.floor(Math.random() * allWords.length);
+            if (randomIndex != skipIndex) { // avoid this word meaning
+                choices.push( allWords[randomIndex].meaning );
+                collectedSoFar++;
+            }
+        }
+
+        return choices;
+    }
+
+    //
+    // shuffle an array
+    //
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]]; // eslint-disable-line no-param-reassign
+        }
+        return array;
+    }
+
     /*
         Get random "n" test questions.
         Invoke the load test callback
@@ -16,7 +45,7 @@ class PidiWebServices {
         wordsCollection.where('meaning', '>', '').get().then( snapshot => {
             snapshot.forEach( wordObject => {
             allWords.push( wordObject.data() );
-    })
+        })
     })
     .then( snapshot => {
             var collectedSoFar = 0;
@@ -24,7 +53,12 @@ class PidiWebServices {
         while ( collectedSoFar < howMany ) {
             var randomIndex = Math.floor(Math.random() * allWords.length);
             if (!seen[randomIndex]) {
-                randomWords.push( allWords[randomIndex] );
+
+                var choices = this.getChoices(3, allWords, randomIndex); // get 3 random choices
+                choices.push( allWords[randomIndex].meaning );
+
+                randomWords.push( { word: allWords[randomIndex], choices: this.shuffleArray(choices) } );
+                seen[randomIndex] = randomIndex;
                 collectedSoFar++;
             }
         }
