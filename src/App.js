@@ -1,18 +1,58 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import PidiWebServices from './services/pidi_webservices.js';
+
+import {
+    Route,
+    NavLink,
+    HashRouter
+} from 'react-router-dom';
+
+import NewWords from './NewWords.js';
+import TestWords from './TestWords.js';
+import FlashCardReview from './FlashCardReview.js';
 
 class App extends Component {
+    constructor() {
+        super();
+        this.state = {};
+        this.pidiWebServices = new PidiWebServices();
+        this.testWords = {};
+    }
+
+    componentDidMount() {
+        console.log('Getting random words');
+        this.pidiWebServices.fetchTest(10, this.loadTest);
+    }
+
+    loadTest(test) {
+        //this.testWords = test;
+        console.log(test);
+    }
+
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
+          <h1 className="App-title">Pidi</h1>
         </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+          <HashRouter>
+            <div>
+              <div>
+                <ul className='header'>
+                    <li> <NavLink to="/NewWords">Learn New Words</NavLink></li>
+                    <li> <NavLink to="/TestWords">Test Words</NavLink></li>
+                    <li> <NavLink to="/FlashCardReview">Flash Card Review</NavLink></li>
+                </ul>
+              </div>
+              <div className="content">
+                    <Route path="/NewWords" component={NewWords}/>
+                    <Route path="/TestWords" component={TestWords}/>
+                    <Route path="/FlashCardReview" component={FlashCardReview}/>
+              </div>
+            </div>
+          </HashRouter>
       </div>
     );
   }
