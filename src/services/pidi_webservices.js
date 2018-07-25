@@ -6,11 +6,11 @@ class PidiWebServices {
     // skipIndex - will avoid words that have been seen
     getChoices(howMany, allWords, skipIndex) {
         var collectedSoFar = 0;
-        var choices = new Array();
+        var choices = [];
 
         while (collectedSoFar < howMany) {
             var randomIndex = Math.floor(Math.random() * allWords.length);
-            if (randomIndex != skipIndex) { // avoid this word meaning
+            if (randomIndex !== skipIndex) { // avoid this word meaning
                 choices.push( allWords[randomIndex].meaning );
                 collectedSoFar++;
             }
@@ -39,8 +39,8 @@ class PidiWebServices {
         firestore.settings({timestampsInSnapshots: true}); // this will fetch the timestamps in right format
         var wordsCollection = firestore.collection('words');
 
-        var allWords = new Array();
-        var randomWords = new Array();
+        var allWords = [];
+        var randomWords = [];
 
         wordsCollection.where('meaning', '>', '').get().then( snapshot => {
             snapshot.forEach( wordObject => {

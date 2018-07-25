@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 
 import {DEFAULT_ASSESSMENT_QUESTION_COUNT} from './Wellknown'
 import PidiWebServices from './services/pidi_webservices'
-
+import Question from './Question'
 
 class TestWords extends Component {
     pidiService = new PidiWebServices()
     constructor(props){
         super(props);
-        //this.state = {currentQuestion: null};
+        this.state = {};
     }
 
     componentDidMount() {
@@ -16,15 +16,27 @@ class TestWords extends Component {
     }
 
     startTest = (result) => {
+        // console.log("Question: ", result.data[0].word.word)
+        // console.log("typeof Choices: ", typeof result.data[0].choices)
+        // console.log("Choices: ", result.data[0].choices)
+        // result.data[0].choices.map((v, i) => {console.log(v)})
         this.setState({
-            currentQuestion: result.data[0]
+            currentIndex: 0,
+            howMany: result.howMany,
+            currentQuestion: result.data[0].word.word,
+            currentChoices: result.data[0].choices
         });
     }
     render(){
         return(
             <div>
                 <h2>Test your knowledge</h2>
-                <h4>Number of questions: {DEFAULT_ASSESSMENT_QUESTION_COUNT}</h4>
+                <h4>Question: {this.state.currentIndex + 1}/{this.state.howMany}</h4>
+                {/*{this.state.currentQuestion}*/}
+                <Question key={this.state.currentQuestion} question={this.state.currentQuestion} choices={this.state.currentChoices}/>
+                {/*{this.state.currentChoices.map((v, i) => {console.log(v)})}*/}
+                {/*{this.state.currentChoices}*/}
+
             </div>
         );
     }
