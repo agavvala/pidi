@@ -12,7 +12,7 @@ class PreviousQuestion extends Component{
             return null;
         }
         return(
-            <button onClick={this.props.onPreviousQuestion}>Previous Question</button>
+            <button className='button btn btn-primary' onClick={this.props.onPreviousQuestion}>&lt;</button>
         );
     }
 }

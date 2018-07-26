@@ -11,7 +11,7 @@ class NextQuestion extends Component{
             return null;
         }
         return(
-            <button onClick={this.props.onNextQuestion}>Next Question</button>
+            <button className='button btn btn-primary' onClick={this.props.onNextQuestion}>&gt;</button>
         );
     }
 }

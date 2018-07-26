@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap-grid.css';
 import './App.css';
 import PidiWebServices from './services/pidi_webservices.js';
 
@@ -21,14 +23,15 @@ class App extends Component {
         this.testWords = {};
     }
 
-    componentDidMount() {
+
+    componentDidMount(){
         console.log('Getting random words');
-        this.pidiWebServices.fetchTest(10, this.loadTest);
+        this.pidiWebServices.fetchTest(10, this.loadTest.bind(this));
     }
 
     loadTest(test) {
-        //this.testWords = test;
-        console.log(test);
+        this.testWords = test;
+        console.log(this.testWords);
     }
 
   render() {
@@ -47,7 +50,7 @@ class App extends Component {
                 </ul>
               </div>
               <div className="content">
-                    <Route path="/NewWords" component={NewWords}/>
+                    <Route path="/NewWords" component={NewWords} />
                     <Route path="/TestWords" component={TestWords}/>
                     <Route path="/FlashCardReview" component={FlashCardReview}/>
               </div>
