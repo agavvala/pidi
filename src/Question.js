@@ -4,6 +4,11 @@ import PropTypes from 'prop-types'
 import './question.css'
 
 class Question extends Component {
+
+    constructor(props){
+        super(props)
+    }
+
     render() {
         if (!this.props.question) {
             return null;
@@ -14,7 +19,8 @@ class Question extends Component {
                 <ul>
                 {this.props.choices.map(choice => (
                     <li key={choice}>
-                    <input type="radio"  name={this.props.question} value={choice}/>
+                    <input type="radio"  name={this.props.question} value={choice}
+                           onChange={this.props.onAnswerSelect}/>
                     {choice}
                     </li>
                 ))}

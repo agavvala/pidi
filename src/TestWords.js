@@ -10,7 +10,7 @@ class TestWords extends Component {
     pidiService = new PidiWebServices()
     constructor(props){
         super(props);
-        this.state = {};
+        this.state = {answers: []};
     }
 
     componentDidMount() {
@@ -43,10 +43,18 @@ class TestWords extends Component {
         }));
     }
 
+    onAnswerChanged = (e) => {
+        let selectedAnswer = e.currentTarget.value
+        this.setState(function(prevState, props){
+            let answers = prevState.answers
+            answers[prevState.currentIndex] = selectedAnswer
+            return {answers: answers}
+        });
+    }
     render(){
         if(!this.state.questions){
             return (
-                <div>loading...</div>
+                <div>Loading Questions... Good Luck.</div>
             );
         }
         return(
@@ -55,7 +63,10 @@ class TestWords extends Component {
                 <h4>Question: {this.state.currentIndex + 1}/{this.state.howMany}</h4>
                 <Question key={this.state.questions[this.state.currentIndex]}
                           question={this.state.questions[this.state.currentIndex].word.word}
-                          choices={this.state.questions[this.state.currentIndex].choices}/>
+                          choices={this.state.questions[this.state.currentIndex].choices}
+                          onAnswerSelect={this.onAnswerChanged}
+                />
+
                 <PreviousQuestion index={this.state.currentIndex}
                                   onPreviousQuestion={this.previousQuestion}
                             />
