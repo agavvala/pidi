@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import {DEFAULT_ASSESSMENT_QUESTION_COUNT} from './Wellknown'
 import PidiWebServices from './services/pidi_webservices'
 import Question from './Question'
+import PreviousQuestion from './PreviousQuestion'
+import NextQuestion from './NextQuestion'
 
 class TestWords extends Component {
     pidiService = new PidiWebServices()
@@ -23,16 +25,44 @@ class TestWords extends Component {
         this.setState({
             currentIndex: 0,
             howMany: result.howMany,
-            currentQuestion: result.data[0].word.word,
-            currentChoices: result.data[0].choices
+            questions: result.data
         });
     }
+
+    nextQuestion = () => {
+        //console.log("Showing Next Question...")
+        this.setState((prevState, props) => ({
+            currentIndex: prevState.currentIndex + 1
+        }));
+    }
+
+    previousQuestion = () => {
+        //console.log("Showing Previous Question...")
+        this.setState((prevState, props) => ({
+            currentIndex: prevState.currentIndex - 1
+        }));
+    }
+
     render(){
+        if(!this.state.questions){
+            return (
+                <div>loading...</div>
+            );
+        }
         return(
             <div>
                 <h2>Test your knowledge</h2>
                 <h4>Question: {this.state.currentIndex + 1}/{this.state.howMany}</h4>
-                <Question key={this.state.currentQuestion} question={this.state.currentQuestion} choices={this.state.currentChoices}/>
+                <Question key={this.state.questions[this.state.currentIndex]}
+                          question={this.state.questions[this.state.currentIndex].word.word}
+                          choices={this.state.questions[this.state.currentIndex].choices}/>
+                <PreviousQuestion index={this.state.currentIndex}
+                                  onPreviousQuestion={this.previousQuestion}
+                            />
+                <NextQuestion index={this.state.currentIndex}
+                              maxQuestions={this.state.howMany}
+                              onNextQuestion={this.nextQuestion}
+                            />
             </div>
         );
     }

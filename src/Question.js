@@ -13,8 +13,8 @@ class Question extends Component {
                 <h5>{this.props.question}</h5>
                 <ul>
                 {this.props.choices.map(choice => (
-                    <li>
-                    <input type="radio" name={this.props.question} value={choice}/>
+                    <li key={choice}>
+                    <input type="radio"  name={this.props.question} value={choice}/>
                     {choice}
                     </li>
                 ))}
