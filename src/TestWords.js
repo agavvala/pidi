@@ -62,7 +62,35 @@ class TestWords extends Component {
     }
 
     submitTest = () => {
-        console.log("submitting test....")
+        let questions = this.state.questions;
+        let test_result = this.createTestReultsObject();
+        let words_of_interest = test_result.words_of_interest
+        delete test_result.words_of_interest;
+        console.log("submitting test....", test_result, questions, words_of_interest);
+        this.pidiService.saveTestResults("pMGEJiE2LdxE3xgZMxYS", test_result, questions, words_of_interest)
+    }
+
+    createTestReultsObject = () => {
+        let userAnswers = this.state.answers;
+        let questions = this.state.questions;
+        let totalQuestions = this.state.howMany;
+        let correctCount = 0, wrongCount = 0;
+        let words_of_interest = [];
+        for (let i = 0; i < totalQuestions; i++) {
+            if (questions[i].word.meaning === userAnswers[i]) {
+                correctCount++
+            } else {
+                wrongCount++
+                words_of_interest.push(questions[i].word);
+            }
+        }
+        return {
+            answered_right: correctCount,
+            answered_wrong: wrongCount,
+            number_of_questions: totalQuestions,
+            taken_on: new Date(),
+            words_of_interest: words_of_interest
+        }
     }
 
     render(){
