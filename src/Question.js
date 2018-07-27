@@ -15,13 +15,16 @@ class Question extends Component {
         }
         return (
             <div>
-                <h5>{this.props.question}</h5>
-                <ul>
+                <h5 className="word">{this.props.question}</h5>
+                <ul className="answers">
                 {this.props.choices.map(choice => (
                     <li key={choice}>
-                    <input type="radio"  name={this.props.question} value={choice}
-                           onChange={this.props.onAnswerSelect}/>
-                    {choice}
+                        <label>
+                            <input type="radio" name={this.props.question} value={choice}
+                                   checked={choice === this.props.currSelection}
+                                   onChange={this.props.onAnswerSelect}/>&nbsp;
+                            {choice}
+                        </label>
                     </li>
                 ))}
                 </ul>

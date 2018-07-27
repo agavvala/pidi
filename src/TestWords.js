@@ -5,6 +5,7 @@ import PidiWebServices from './services/pidi_webservices'
 import Question from './Question'
 import PreviousQuestion from './PreviousQuestion'
 import NextQuestion from './NextQuestion'
+import SubmitTest from './SubmitTest'
 
 class TestWords extends Component {
     pidiService = new PidiWebServices()
@@ -51,6 +52,19 @@ class TestWords extends Component {
             return {answers: answers}
         });
     }
+
+    shouldDisableSubmit = () => {
+        return this.state.answers.length === this.state.howMany
+    }
+
+    pendingQuestionCount = () => {
+        return this.state.howMany - this.state.answers.length;
+    }
+
+    submitTest = () => {
+        console.log("submitting test....")
+    }
+
     render(){
         if(!this.state.questions){
             return (
@@ -59,21 +73,39 @@ class TestWords extends Component {
         }
         return(
             <div>
-                <h2>Test your knowledge</h2>
-                <h4>Question: {this.state.currentIndex + 1}/{this.state.howMany}</h4>
+                {/*<h4>Test your knowledge</h4>*/}
                 <Question key={this.state.questions[this.state.currentIndex]}
                           question={this.state.questions[this.state.currentIndex].word.word}
+                          currSelection={this.state.answers[this.state.currentIndex]}
                           choices={this.state.questions[this.state.currentIndex].choices}
                           onAnswerSelect={this.onAnswerChanged}
                 />
 
-                <PreviousQuestion index={this.state.currentIndex}
-                                  onPreviousQuestion={this.previousQuestion}
-                            />
-                <NextQuestion index={this.state.currentIndex}
-                              maxQuestions={this.state.howMany}
-                              onNextQuestion={this.nextQuestion}
-                            />
+                <div className="row justify-content-center">
+                    <div className="col-sm-3 col-md-3">
+                        <ul className="nav nav-pills">
+                            <li>
+                                <PreviousQuestion index={this.state.currentIndex}
+                                                  onPreviousQuestion={this.previousQuestion}
+                                />
+                            </li>
+                            <li>
+                                {/*<h6><strong>{this.state.currentIndex + 1}/{this.state.howMany}</strong></h6>*/}
+                            </li>
+                            <li>
+                                <NextQuestion index={this.state.currentIndex}
+                                              maxQuestions={this.state.howMany}
+                                              onNextQuestion={this.nextQuestion}
+                                />
+                            </li>
+                            <li>
+                                <SubmitTest isDisabled={this.shouldDisableSubmit()}
+                                            pendingCount={this.pendingQuestionCount()}
+                                            submitHandle={this.submitTest}/>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         );
     }

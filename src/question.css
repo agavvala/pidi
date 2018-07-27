@@ -2,3 +2,12 @@
 ul{
     list-style: none;
 }
+
+ul.answers{
+    text-align: left;
+}
+
+.word{
+    text-align: left;
+    font-weight: bolder;
+}
