@@ -6,12 +6,13 @@ import Question from './Question'
 import PreviousQuestion from './PreviousQuestion'
 import NextQuestion from './NextQuestion'
 import SubmitTest from './SubmitTest'
+import TestWordsResults from './TestWordsResults'
 
 class TestWords extends Component {
     pidiService = new PidiWebServices()
     constructor(props){
         super(props);
-        this.state = {answers: []};
+        this.state = {answers: [], testCompleted: false};
     }
 
     componentDidMount() {
@@ -68,6 +69,12 @@ class TestWords extends Component {
         delete test_result.words_of_interest;
         console.log("submitting test....", test_result, questions, words_of_interest);
         this.pidiService.saveTestResults("pMGEJiE2LdxE3xgZMxYS", test_result, questions, words_of_interest)
+        this.setState(function(prevState, props){
+            return {
+                testCompleted: true,
+                testResult:test_result
+            }
+        });
     }
 
     createTestReultsObject = () => {
@@ -99,43 +106,55 @@ class TestWords extends Component {
                 <div>Loading Questions... Good Luck.</div>
             );
         }
-        return(
-            <div>
-                {/*<h4>Test your knowledge</h4>*/}
-                <Question key={this.state.questions[this.state.currentIndex]}
-                          question={this.state.questions[this.state.currentIndex].word.word}
-                          currSelection={this.state.answers[this.state.currentIndex]}
-                          choices={this.state.questions[this.state.currentIndex].choices}
-                          onAnswerSelect={this.onAnswerChanged}
-                />
+        if(!this.state.testCompleted) {
+            return (
+                <div>
+                    {/*<h4>Test your knowledge</h4>*/}
+                    <Question key={this.state.questions[this.state.currentIndex]}
+                              question={this.state.questions[this.state.currentIndex].word.word}
+                              currSelection={this.state.answers[this.state.currentIndex]}
+                              choices={this.state.questions[this.state.currentIndex].choices}
+                              onAnswerSelect={this.onAnswerChanged}
+                    />
 
-                <div className="row justify-content-center">
-                    <div className="col-sm-3 col-md-3">
-                        <ul className="nav nav-pills">
-                            <li>
-                                <PreviousQuestion index={this.state.currentIndex}
-                                                  onPreviousQuestion={this.previousQuestion}
-                                />
-                            </li>
-                            <li>
-                                {/*<h6><strong>{this.state.currentIndex + 1}/{this.state.howMany}</strong></h6>*/}
-                            </li>
-                            <li>
-                                <NextQuestion index={this.state.currentIndex}
-                                              maxQuestions={this.state.howMany}
-                                              onNextQuestion={this.nextQuestion}
-                                />
-                            </li>
-                            <li>
-                                <SubmitTest isDisabled={this.shouldDisableSubmit()}
-                                            pendingCount={this.pendingQuestionCount()}
-                                            submitHandle={this.submitTest}/>
-                            </li>
-                        </ul>
+                    <div className="row justify-content-center">
+                        <div className="col-sm-3 col-md-3">
+                            <ul className="nav nav-pills">
+                                <li>
+                                    <PreviousQuestion index={this.state.currentIndex}
+                                                      onPreviousQuestion={this.previousQuestion}
+                                    />
+                                </li>
+                                <li>
+                                    {/*<h6><strong>{this.state.currentIndex + 1}/{this.state.howMany}</strong></h6>*/}
+                                </li>
+                                <li>
+                                    <NextQuestion index={this.state.currentIndex}
+                                                  maxQuestions={this.state.howMany}
+                                                  onNextQuestion={this.nextQuestion}
+                                    />
+                                </li>
+                                <li>
+                                    <SubmitTest isDisabled={this.shouldDisableSubmit()}
+                                                pendingCount={this.pendingQuestionCount()}
+                                                submitHandle={this.submitTest}/>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
-        );
+            );
+        }else{
+            return(
+                <div>
+                    <TestWordsResults
+                        userAnswers={this.state.answers}
+                        testResult={this.state.testResult}
+                        questions={this.state.questions}
+                    />
+                </div>
+            );
+        }
     }
 }
 
