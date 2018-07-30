@@ -1,4 +1,16 @@
 
 ul{
     list-style: none;
+<<<<<<< HEAD
+=======
+}
+
+ul.answers{
+    text-align: left;
+}
+
+.word{
+    text-align: left;
+    font-weight: bolder;
+>>>>>>> origin/master
 }
