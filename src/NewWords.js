@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PidiWebServices from "./services/pidi_webservices";
 import PreviousQuestion from './PreviousQuestion'
 import NextQuestion from './NextQuestion'
-import {DEFAULT_ASSESSMENT_QUESTION_COUNT} from './Wellknown'
+import {DEFAULT_ASSESSMENT_QUESTION_COUNT, DEFAULT_USER_DOCUMENT_REFERENCE} from './Wellknown'
 
 
 class NewWords extends Component {
@@ -18,14 +18,16 @@ class NewWords extends Component {
     }
 
     componentDidMount() {
-        this.pidiWebServices.fetchTest(DEFAULT_ASSESSMENT_QUESTION_COUNT, this.startLearning.bind(this))
+        this.pidiWebServices.fetchTest(DEFAULT_USER_DOCUMENT_REFERENCE, DEFAULT_ASSESSMENT_QUESTION_COUNT, this.startLearning.bind(this))
     }
 
     startLearning(result) {
+        console.log('START LEANING!');
+        console.log(result);
         this.setState({
             currentIndex: 0,
             howMany: result.howMany,
-            questions: result.data
+            questions: result.words
         });
         this.setActiveWord();
     }

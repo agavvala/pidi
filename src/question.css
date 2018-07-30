@@ -1,8 +1,6 @@
 
 ul{
     list-style: none;
-<<<<<<< HEAD
-=======
 }
 
 ul.answers{
@@ -12,5 +10,4 @@ ul.answers{
 .word{
     text-align: left;
     font-weight: bolder;
->>>>>>> origin/master
 }

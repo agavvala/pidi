@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import {DEFAULT_ASSESSMENT_QUESTION_COUNT} from './Wellknown'
+import {DEFAULT_ASSESSMENT_QUESTION_COUNT, DEFAULT_USER_DOCUMENT_REFERENCE} from './Wellknown'
 import PidiWebServices from './services/pidi_webservices'
 import Question from './Question'
 import PreviousQuestion from './PreviousQuestion'
@@ -16,7 +16,7 @@ class TestWords extends Component {
     }
 
     componentDidMount() {
-        this.pidiService.fetchTest(DEFAULT_ASSESSMENT_QUESTION_COUNT, this.startTest)
+        this.pidiService.fetchTest(DEFAULT_USER_DOCUMENT_REFERENCE, DEFAULT_ASSESSMENT_QUESTION_COUNT, this.startTest)
     }
 
     startTest = (result) => {
@@ -27,7 +27,7 @@ class TestWords extends Component {
         this.setState({
             currentIndex: 0,
             howMany: result.howMany,
-            questions: result.data
+            questions: result.words
         });
     }
 
@@ -78,25 +78,20 @@ class TestWords extends Component {
     }
 
     createTestReultsObject = () => {
-        let userAnswers = this.state.answers;
         let questions = this.state.questions;
         let totalQuestions = this.state.howMany;
-        let correctCount = 0, wrongCount = 0;
-        let words_of_interest = [];
+        let failedWords = [];
+        let passedWords = [];
         for (let i = 0; i < totalQuestions; i++) {
             if (questions[i].word.meaning === userAnswers[i]) {
-                correctCount++
+                failedWords.push(questions[i].word.word);
             } else {
-                wrongCount++
-                words_of_interest.push(questions[i].word);
+                passedWords.push(questions[i].word.word);
             }
         }
         return {
-            answered_right: correctCount,
-            answered_wrong: wrongCount,
-            number_of_questions: totalQuestions,
-            taken_on: new Date(),
-            words_of_interest: words_of_interest
+            failed_words: failedWords,
+            passed_words: passedWords
         }
     }
 

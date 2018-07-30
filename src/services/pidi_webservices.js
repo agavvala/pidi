@@ -11,7 +11,7 @@ class PidiWebServices {
         while (collectedSoFar < howMany) {
             var randomIndex = Math.floor(Math.random() * allWords.length);
             if (randomIndex !== skipIndex) { // avoid this word meaning
-                choices.push( allWords[randomIndex].meaning );
+                choices.push(allWords[randomIndex].meaning);
                 collectedSoFar++;
             }
         }
@@ -19,9 +19,58 @@ class PidiWebServices {
         return choices;
     }
 
-    saveTestResults = (user_pk, test_result, questions, words_of_interest) => {
+    getFirestore() {
         let db = firebase.firestore();
         db.settings({timestampsInSnapshots: true}); // this will fetch the timestamps in right format
+        return db;
+    }
+
+    //
+    // submitTest will
+    // update the test document
+    //      changes the status from 'pending' to 'completed'
+    //      updates the answered_correct: and answered_wrong: and submittedAt:
+    //
+    // for each failed word
+    //      find the words_of_interest that matches the incorrect_word. insert if not found one
+    //          update attempts_wrong: ++
+    //          last_updated: to now
+    //
+    // for each passed word
+    //      find the words_of_interest that matched the correct_word. DO NOT insert if not found
+    //          update attempts_correct: ++
+    //          last_updated: to now
+    //
+    // @userDocumentReferenceKey : the document id for /users/xxx example: pX12345jHT corresponding to Ria
+    // @testDocumentReferenceKey: the document id for /users/pX12345jHT/tests/xxx example: jTPOsfTE for one of the tests in the test collection
+    // @testResultPacket: a temporary data structure that looks like this:
+    //
+    //  { failed_words: [x, y, z], passed_words: [a, b] }
+    //
+    // @afterSubmitted: a callback to call after the submission is complete
+    //
+    submitTest(userDocumentReferenceKey, testDocumentReferenceKey, testResultPacket, afterSubmitted) {
+        let firestore = this.getFirestore();
+        let submittedAt = new Date();
+        let testDocumentReference = firestore.collection('/users/'+userDocumentReferenceKey+'/tests/'+testDocumentReferenceKey);
+
+        // update the test object as specified
+        testDocumentReference.set( {
+            status: 'completed',
+            answered_correct: testResultPacket.failed_words.length,
+            answered_wrong: testResultPacket.passed_wrods.length,
+            submittedAt: submittedAt
+        }, {merge: true}).then( ref => {
+            testResultPacket.failed_words.forEach( word => {
+                let wordsOfInterestCollectionReference = firestore.collection('/users/'+userDocumentReferenceKey+'/words_of_interest');
+                wordsOfInterestCollectionReference.where('word', '==', word).get().then( wordOfInterestSnapshot => {
+                    wordOfInterestSnapshot.set( { failed_count: })
+                })
+            })
+        })
+    }
+
+    saveTestResults = (user_pk, test_result, questions, words_of_interest) => {
 
         let userReference = db.collection("users").doc(user_pk);
         let testReferece = userReference.collection("tests");
@@ -33,16 +82,16 @@ class PidiWebServices {
         words_of_interest.forEach(woi => {
             db_woi.where('word', '==', woi.word)
                 .onSnapshot(function (querySnapshot) {
-                    if(querySnapshot.size > 0){
+                    if (querySnapshot.size > 0) {
                         console.log("error  before...")
                         querySnapshot.forEach(function (doc) {
                             console.log(doc)
-                           //TODO: update the failed_count by one and last_failed_on timestamp
+                            //TODO: update the failed_count by one and last_failed_on timestamp
                         });
-                    }else{
+                    } else {
                         console.log("first time error...")
                         db_woi.add({
-                            failed_count:  1,
+                            failed_count: 1,
                             last_failed_on: new Date(),
                             word: woi.word,
                             word_ref: woi
@@ -66,38 +115,81 @@ class PidiWebServices {
         Get random "n" test questions.
         Invoke the load test callback
      */
-    fetchTest(howMany, loadDataSet) {
+    fetchTest(userDocumentReferenceKey, howMany, loadDataSet) {
         var firestore = firebase.firestore();
         firestore.settings({timestampsInSnapshots: true}); // this will fetch the timestamps in right format
         var wordsCollection = firestore.collection('words');
 
-        var allWords = [];
-        var randomWords = [];
+        // does the user already have a pending test?
+        let userDocumentReference = firestore.collection("users").doc(userDocumentReferenceKey);
+        let testCollectionReference = userDocumentReference.collection("tests");
+        let existingPendingTest = false;
 
-        wordsCollection.where('meaning', '>', '').get().then( snapshot => {
-            snapshot.forEach( wordObject => {
-            allWords.push( wordObject.data() );
-        })
-    })
-    .then( snapshot => {
-            var collectedSoFar = 0;
-        var seen = {};
-        while ( collectedSoFar < howMany ) {
-            var randomIndex = Math.floor(Math.random() * allWords.length);
-            if (!seen[randomIndex]) {
 
-                var choices = this.getChoices(3, allWords, randomIndex); // get 3 random choices
-                choices.push( allWords[randomIndex].meaning );
+        testCollectionReference.where('status', '==', 'pending').get().then(snapshot => {
+            snapshot.forEach(testObject => {
+                console.log('Found AN EXISTING one');
 
-                randomWords.push( { word: allWords[randomIndex], choices: this.shuffleArray(choices) } );
-                seen[randomIndex] = randomIndex;
-                collectedSoFar++;
-            }
-        }
-    })
-    .then( snapshot => {
-            loadDataSet({ howMany: howMany, data: randomWords });
-    });
+                existingPendingTest = true;
+                var testDataStrcuture = testObject.data();
+                testDataStrcuture.documentId = testObject.id;
+                loadDataSet(testDataStrcuture);
+            })
+        }).then(snapshot => {
+                if (!existingPendingTest) {
+                    console.log('Did not find an existing test');
+                        var allWords = [];
+                        var randomWords = [];
+
+                        wordsCollection.where('meaning', '>', '').get().then(snapshot => {
+                            snapshot.forEach(wordObject => {
+                                allWords.push(wordObject.data());
+                            })
+                        }).then(snapshot => {
+                            var collectedSoFar = 0;
+                            var seen = {};
+                            while (collectedSoFar < howMany) {
+                                var randomIndex = Math.floor(Math.random() * allWords.length);
+                                if (!seen[randomIndex]) {
+
+                                    var choices = this.getChoices(3, allWords, randomIndex); // get 3 random choices
+                                    choices.push(allWords[randomIndex].meaning);
+
+                                    randomWords.push({word: allWords[randomIndex], choices: this.shuffleArray(choices)});
+                                    seen[randomIndex] = randomIndex;
+                                    collectedSoFar++;
+                                }
+                            }
+                        }).then(snapshot => {
+                            var testDataObject = {status: 'pending', howMany: howMany, words: randomWords, lastAttempted: new Date()};
+                            this.saveNewTest(userDocumentReferenceKey, testDataObject).then(testDataReference => {
+                                testDataObject.documentId = testDataReference.id;
+                                loadDataSet(testDataObject);
+                            })
+                        });
+
+        }});
+
+
+    }
+
+    /*
+     * Save the test for user
+     *
+     */
+    saveNewTest(userDocumentReferenceKey, testDataObject) {
+
+        let db = firebase.firestore();
+        db.settings({timestampsInSnapshots: true}); // this will fetch the timestamps in right format
+
+        let userDocumentReference = db.collection("users").doc(userDocumentReferenceKey);
+        let testCollectionReference = userDocumentReference.collection("tests");
+        return testCollectionReference.add(testDataObject);
+        /*
+        testReferece.add(test_result).then(testReference => {
+            let questionReference = testReference.collection('questions');
+            questions.forEach(word => questionReference.add(word));
+        });*/
 
     }
 }

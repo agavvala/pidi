@@ -25,13 +25,13 @@ class App extends Component {
 
 
     componentDidMount(){
-        console.log('Getting random words');
-        this.pidiWebServices.fetchTest(10, this.loadTest.bind(this));
+        //console.log('Getting random words');
+        //this.pidiWebServices.fetchTest(10, this.loadTest.bind(this));
     }
 
     loadTest(test) {
-        this.testWords = test;
-        console.log(this.testWords);
+        //1this.testWords = test;
+        //console.log(this.testWords);
     }
 
   render() {
