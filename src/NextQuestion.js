@@ -1,4 +1,3 @@
-
 import React, {Component} from 'react'
 
 class NextQuestion extends Component{
