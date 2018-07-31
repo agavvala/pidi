@@ -184,6 +184,42 @@ class PidiWebServices {
 
     }
 
+
+    /*
+            Get random "n" flash cards
+            Invoke the load test callback
+         */
+    fetchFlashcards(howMany, loadDataSet) {
+        var firestore = firebase.firestore();
+        firestore.settings({timestampsInSnapshots: true}); // this will fetch the timestamps in right format
+        var wordsCollection = firestore.collection('words');
+
+        var allWords = [];
+        var randomWords = [];
+
+        wordsCollection.where('flashcard', '>', 'IM_20161005_0000.JPG').where('flashcard', '<', 'IM_20161005_0201.JPG').get().then(snapshot => {
+            snapshot.forEach(wordObject => {
+                allWords.push(wordObject.data());
+            })
+        })
+            .then(snapshot => {
+                var collectedSoFar = 0;
+                var seen = {};
+                while (collectedSoFar < howMany) {
+                    var randomIndex = Math.floor(Math.random() * allWords.length);
+                    if (!seen[randomIndex]) {
+                        randomWords.push({word: allWords[randomIndex]});
+                        seen[randomIndex] = randomIndex;
+                        collectedSoFar++;
+                    }
+                }
+            })
+            .then(snapshot => {
+                loadDataSet({howMany: howMany, data: randomWords});
+            });
+
+    }
+
     /*
      * Save the test for user
      *

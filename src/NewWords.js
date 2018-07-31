@@ -9,14 +9,8 @@ class NewWords extends Component {
     constructor() {
         super();
         this.pidiWebServices = new PidiWebServices();
-        this.currentIndex = -1;
 
-        this.state = {
-            currentIndex: 0,
-            activeWord: {word: '', meaning: ''},
-            howMany: 10,
-            questions: []
-        };
+        this.state = { };
     }
 
     componentDidMount() {
@@ -26,46 +20,35 @@ class NewWords extends Component {
     startLearning(result) {
         console.log('START LEANING!');
         console.log(result);
-        this.currentIndex = 0;
+
         this.setState({
             currentIndex: 0,
             howMany: result.howMany,
-            questions: result.words
+            questions: result.words,
+            activeWord: result.words[0]
         });
-        this.setActiveWord();
     }
 
+
     nextQuestion() {
-        /*
-        this.setState((prevState, props) => ({
-            currentIndex: prevState.currentIndex + 1
-        }));
-        */
-        this.currentIndex++;
-        this.setActiveWord();
+        this.setActiveWord( this.state.currentIndex + 1);
     }
 
     previousQuestion() {
-        /*
-        this.setState((prevState, props) => ({
-            currentIndex: prevState.currentIndex - 1
-        }));
-        */
-        this.currentIndex--;
-        this.setActiveWord();
+        this.setActiveWord( this.state.currentIndex - 1);
     }
 
-    setActiveWord() {
-        console.log('Active Word: '+this.currentIndex);
-        console.log(this.state.questions[this.currentIndex]);
-
-        this.setState({currentIndex: this.currentIndex, activeWord: this.state.questions[this.currentIndex]});
+    setActiveWord(theIndex) {
+        console.log('Active Word: ' + this.state.questions[theIndex]);
+        this.setState({activeWord: this.state.questions[theIndex], currentIndex: theIndex });
     }
+
+
 
 
     render() {
 
-        if (this.state.questions.length <= 0) {
+        if (!this.state.questions) {
             return (
                 <div>loading...</div>
             );
