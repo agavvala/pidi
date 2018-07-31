@@ -53,26 +53,35 @@ class PidiWebServices {
     submitTest(userDocumentReferenceKey, testDocumentReferenceKey, testResultPacket, afterSubmitted, onFailedToUpdate) {
         let firestore = this.getFirestore();
         let submittedAt = new Date();
-        let testDocumentReference = firestore.collection('/users/'+userDocumentReferenceKey+'/tests/'+testDocumentReferenceKey);
+        let testDocumentReference = firestore.collection('/users/'+userDocumentReferenceKey+'/tests').doc(testDocumentReferenceKey);
+        //console.log('TEST Results Packet');
+        //console.log(testResultPacket);
 
         // update the test object as specified
         testDocumentReference.set( {
             status: 'completed',
             answered_correct: testResultPacket.failed_words.length,
-            answered_wrong: testResultPacket.passed_wrods.length,
+            answered_wrong: testResultPacket.passed_words.length,
             submittedAt: submittedAt
         }, {merge: true}).then( ref => {
             // handle all failed words
             testResultPacket.failed_words.forEach( word => {
                 let wordsOfInterestCollectionReference = firestore.collection('/users/'+userDocumentReferenceKey+'/words_of_interest');
+                //console.log(wordsOfInterestCollectionReference);
+                let theWordExits = false;
                 wordsOfInterestCollectionReference.where('word', '==', word).get().then( wordOfInterestSnapshot => {
                     if (wordOfInterestSnapshot.exists) {
                         let theWord = wordOfInterestSnapshot.data();
-                        wordOfInterestSnapshot.ref.set({failed_count: theWord.failed_count+1, last_updated: submittedAt}, {merge: true}); // update the failed count
-                    } else {
-                        // the failed word does not exist, so we must add it
-                        wordOfInterestSnapshot.ref.add({word: word, failed_count: 1, last_updated: submittedAt} );
+                        wordOfInterestSnapshot.ref.set({
+                            failed_count: theWord.failed_count + 1,
+                            last_updated: submittedAt
+                        }, {merge: true}); // update the failed count
+                        theWordExits = true;
                     }
+                }).then( ref => {
+                        if (!theWordExits) {
+                            wordsOfInterestCollectionReference.add( {word: word, failed_count: 1, last_updated: submittedAt} );
+                        }
                 })
             })
         }).then( ref => {
