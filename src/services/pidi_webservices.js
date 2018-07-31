@@ -108,38 +108,6 @@ class PidiWebServices {
         })
     }
 
-    /*
-    saveTestResults = (user_pk, test_result, questions, words_of_interest) => {
-
-        let userReference = db.collection("users").doc(user_pk);
-        let testReferece = userReference.collection("tests");
-        testReferece.add(test_result).then(testReference => {
-            let questionReference = testReference.collection('questions');
-            questions.forEach(word => questionReference.add(word));
-        });
-        let db_woi = userReference.collection('words_of_interest');
-        words_of_interest.forEach(woi => {
-            db_woi.where('word', '==', woi.word)
-                .onSnapshot(function (querySnapshot) {
-                    if (querySnapshot.size > 0) {
-                        console.log("error  before...")
-                        querySnapshot.forEach(function (doc) {
-                            console.log(doc)
-                            //TODO: update the failed_count by one and last_failed_on timestamp
-                        });
-                    } else {
-                        console.log("first time error...")
-                        db_woi.add({
-                            failed_count: 1,
-                            last_failed_on: new Date(),
-                            word: woi.word,
-                            word_ref: woi
-                        })
-                    }
-                });
-        })
-    }
-    */
     //
     // shuffle an array
     //
