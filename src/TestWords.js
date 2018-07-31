@@ -102,9 +102,9 @@ class TestWords extends Component {
         let passedWords = [];
         for (let i = 0; i < totalQuestions; i++) {
             if (questions[i].word.meaning === userAnswers[i]) {
-                failedWords.push(questions[i].word.word);
-            } else {
                 passedWords.push(questions[i].word.word);
+            } else {
+                failedWords.push(questions[i].word.word);
             }
         }
         return {

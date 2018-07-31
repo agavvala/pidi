@@ -54,8 +54,8 @@ class PidiWebServices {
         let firestore = this.getFirestore();
         let submittedAt = new Date();
         let testDocumentReference = firestore.collection('/users/'+userDocumentReferenceKey+'/tests').doc(testDocumentReferenceKey);
-        //console.log('TEST Results Packet');
-        //console.log(testResultPacket);
+        console.log('TEST Results Packet');
+        console.log(testResultPacket);
 
         // update the test object as specified
         testDocumentReference.set( {
@@ -67,11 +67,12 @@ class PidiWebServices {
             // handle all failed words
             testResultPacket.failed_words.forEach( word => {
                 let wordsOfInterestCollectionReference = firestore.collection('/users/'+userDocumentReferenceKey+'/words_of_interest');
-                //console.log(wordsOfInterestCollectionReference);
+                console.log(wordsOfInterestCollectionReference);
                 let theWordExits = false;
                 wordsOfInterestCollectionReference.where('word', '==', word).get().then( wordOfInterestSnapshot => {
                     if (wordOfInterestSnapshot.exists) {
                         let theWord = wordOfInterestSnapshot.data();
+                        console.log('The FAILED word: '+word+ ' is found among the failed words. So bumping up the count.');
                         wordOfInterestSnapshot.ref.set({
                             failed_count: theWord.failed_count + 1,
                             last_updated: submittedAt
@@ -80,6 +81,7 @@ class PidiWebServices {
                     }
                 }).then( ref => {
                         if (!theWordExits) {
+                            console.log('The word: '+word+' does not exist. So adding..');
                             wordsOfInterestCollectionReference.add( {word: word, failed_count: 1, last_updated: submittedAt} );
                         }
                 })
@@ -90,6 +92,7 @@ class PidiWebServices {
                 let wordsOfInterestCollectionReference = firestore.collection('/users/'+userDocumentReferenceKey+'/words_of_interest');
                 wordsOfInterestCollectionReference.where('word', '==', passedWord).get().then( wordOfInterestSnapshot => {
                     if (wordOfInterestSnapshot.exists) {
+                        console.log('The PASSED word: '+passedWord+ ' is found among the failed words. So bumping up the count.');
                         let theWord = wordOfInterestSnapshot.data();
                         if (!theWord.passed_count) {
                             theWord.passed_count = 0;

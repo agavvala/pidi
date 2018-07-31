@@ -9,11 +9,13 @@ class NewWords extends Component {
     constructor() {
         super();
         this.pidiWebServices = new PidiWebServices();
+        this.currentIndex = -1;
 
         this.state = {
-            currentIndex: -1,
+            currentIndex: 0,
             activeWord: {word: '', meaning: ''},
-            howMany: 10
+            howMany: 10,
+            questions: []
         };
     }
 
@@ -24,6 +26,7 @@ class NewWords extends Component {
     startLearning(result) {
         console.log('START LEANING!');
         console.log(result);
+        this.currentIndex = 0;
         this.setState({
             currentIndex: 0,
             howMany: result.howMany,
@@ -33,28 +36,36 @@ class NewWords extends Component {
     }
 
     nextQuestion() {
+        /*
         this.setState((prevState, props) => ({
             currentIndex: prevState.currentIndex + 1
         }));
+        */
+        this.currentIndex++;
         this.setActiveWord();
     }
 
     previousQuestion() {
+        /*
         this.setState((prevState, props) => ({
             currentIndex: prevState.currentIndex - 1
         }));
+        */
+        this.currentIndex--;
         this.setActiveWord();
     }
 
     setActiveWord() {
-        console.log('Active Word: ' + this.state.questions[this.state.currentIndex]);
-        this.setState({activeWord: this.state.questions[this.state.currentIndex]});
+        console.log('Active Word: '+this.currentIndex);
+        console.log(this.state.questions[this.currentIndex]);
+
+        this.setState({currentIndex: this.currentIndex, activeWord: this.state.questions[this.currentIndex]});
     }
 
 
     render() {
 
-        if (!this.state.questions) {
+        if (this.state.questions.length <= 0) {
             return (
                 <div>loading...</div>
             );
