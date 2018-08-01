@@ -26,6 +26,27 @@ class PidiWebServices {
     }
 
     //
+    // Load all users in the system.
+    //
+    // calls the onUserDataAvailable call back with the user array
+    //
+    getUsers(onUserDataAvailable) {
+      let firestore = this.getFirestore();
+      let userCollection = firestore.collection("users");
+      let users = [];
+
+      userCollection.get().then( userCollectionSnapshot => {
+          userCollectionSnapshot.forEach( userDocument => {
+              let userObject = userDocument.data();
+              userObject.documentId = userDocument.id;
+              users.push( userObject );
+          })
+      }).then( ref => {
+          onUserDataAvailable( users );
+      })
+    }
+
+    //
     // submitTest will
     // update the test document
     //      changes the status from 'pending' to 'completed'

@@ -14,7 +14,9 @@ class NewWords extends Component {
     }
 
     componentDidMount() {
-        this.pidiWebServices.fetchTest(DEFAULT_USER_DOCUMENT_REFERENCE, DEFAULT_ASSESSMENT_QUESTION_COUNT, this.startLearning.bind(this))
+        if (this.props.selectedUserDocumentId) {
+            this.pidiWebServices.fetchTest(this.props.selectedUserDocumentId, DEFAULT_ASSESSMENT_QUESTION_COUNT, this.startLearning.bind(this))
+        }
     }
 
     startLearning(result) {
@@ -47,8 +49,11 @@ class NewWords extends Component {
 
 
     render() {
-
-        if (!this.state.questions) {
+        if (!this.props.selectedUserDocumentId) {
+            return (
+                <div>Please go to "Who Are You?" and select the user name first.</div>
+            );
+        } else  if (!this.state.questions) {
             return (
                 <div>loading...</div>
             );

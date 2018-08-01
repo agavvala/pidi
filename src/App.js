@@ -14,6 +14,7 @@ import {
 import NewWords from './NewWords.js';
 import TestWords from './TestWords.js';
 import FlashCardReview from './FlashCardReview.js';
+import SelectUser from './SelectUser.js';
 
 class App extends Component {
     constructor() {
@@ -34,6 +35,12 @@ class App extends Component {
         //console.log(this.testWords);
     }
 
+    onSelectUser = (e, documentId) => {
+        this.setState( {
+            selectedUserDocumentId : documentId
+        })
+    }
+
   render() {
     return (
       <div className="App">
@@ -44,15 +51,25 @@ class App extends Component {
             <div>
               <div>
                 <ul className='header'>
+                    <li> <NavLink to="/SelectUser">Who Are You?</NavLink></li>
                     <li> <NavLink to="/NewWords">Learn New Words</NavLink></li>
                     <li> <NavLink to="/TestWords">Test Words</NavLink></li>
                     <li> <NavLink to="/FlashCardReview">Flash Card Review</NavLink></li>
                 </ul>
               </div>
               <div className="content">
-                    <Route path="/NewWords" component={NewWords} />
-                    <Route path="/TestWords" component={TestWords}/>
-                    <Route path="/FlashCardReview" component={FlashCardReview}/>
+                    <Route path="/SelectUser"  render={props => (
+                            <SelectUser selectedUserDocumentId={this.state.selectedUserDocumentId} onSelectUser={this.onSelectUser} />
+                        )}/>
+                  <Route path="/NewWords"  render={props => (
+                      <NewWords selectedUserDocumentId={this.state.selectedUserDocumentId}/>
+                  )}/>
+                  <Route path="/TestWords"  render={props => (
+                      <TestWords selectedUserDocumentId={this.state.selectedUserDocumentId}/>
+                  )}/>
+                  <Route path="/FlashCardReview"  render={props => (
+                      <FlashCardReview selectedUserDocumentId={this.state.selectedUserDocumentId}/>
+                  )}/>
               </div>
             </div>
           </HashRouter>

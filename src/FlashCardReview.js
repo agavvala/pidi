@@ -49,12 +49,15 @@ class FlashCardReview extends Component {
 
     render() {
 
-        if (!this.state.questions) {
+        if (!this.props.selectedUserDocumentId) {
+            return (
+                <div>Please go to "Who Are You?" and select the user name first.</div>
+            );
+        } else  if (!this.state.questions) {
             return (
                 <div>loading...</div>
             );
         } else {
-
             return (
                 <div className="container">
                     <div className="row">
