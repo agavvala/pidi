@@ -77,6 +77,8 @@ class TestWords extends Component {
 
         let testResultPacket = this.createTestResultPacket();
 
+        //testResultPacket.failed_words = [ 'rye', 'abduct' ];
+
         this.pidiService.submitTest(this.props.selectedUserDocumentId, this.state.documentId, testResultPacket, this.onSubmittedSuccess, this.onSubmittedFailure)
 
 

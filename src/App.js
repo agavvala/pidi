@@ -68,7 +68,7 @@ class App extends Component {
                     <li> <NavLink to="/SelectUser">Who Are You?</NavLink></li>
                     <li> <NavLink to="/NewWords">Learn New Words</NavLink></li>
                     <li> <NavLink to="/TestWords">Test Words</NavLink></li>
-                    <li> <NavLink to="/FlashCardReview">Flash Card Review</NavLink></li>
+                    <li> <NavLink to="/FlashCardReview">Flash Cards</NavLink></li>
                 </ul>
               </div>
               <div className="content">

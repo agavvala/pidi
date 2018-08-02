@@ -86,24 +86,30 @@ class PidiWebServices {
             submittedAt: submittedAt
         }, {merge: true}).then( ref => {
             // handle all failed words
-            testResultPacket.failed_words.forEach( word => {
+            testResultPacket.failed_words.forEach( failedWord => {
                 let wordsOfInterestCollectionReference = firestore.collection('/users/'+userDocumentReferenceKey+'/words_of_interest');
                 console.log(wordsOfInterestCollectionReference);
                 let theWordExits = false;
-                wordsOfInterestCollectionReference.where('word', '==', word).get().then( wordOfInterestSnapshot => {
-                    if (wordOfInterestSnapshot.exists) {
-                        let theWord = wordOfInterestSnapshot.data();
-                        console.log('The FAILED word: '+word+ ' is found among the failed words. So bumping up the count.');
-                        wordOfInterestSnapshot.ref.set({
-                            failed_count: theWord.failed_count + 1,
-                            last_updated: submittedAt
-                        }, {merge: true}); // update the failed count
-                        theWordExits = true;
+                wordsOfInterestCollectionReference.where('word', '==', failedWord).get().then( wordOfInterestSnapshot => {
+                    //console.log('Found a snapshot..');
+                    //console.log('Snapshot size: '+wordOfInterestSnapshot.size);
+                    if (wordOfInterestSnapshot.size > 0) {
+                        wordOfInterestSnapshot.forEach( snap => {
+                            let theWord = snap.data();
+                            console.log('Failed Word');
+                            console.log(theWord);
+                            console.log('The FAILED word: ' + failedWord + ' is found among the failed words. So bumping up the count.');
+                            snap.ref.set({
+                                failed_count: theWord.failed_count + 1,
+                                last_updated: submittedAt
+                            }, {merge: true}); // update the failed count
+                            theWordExits = true;
+                        });
                     }
                 }).then( ref => {
                         if (!theWordExits) {
-                            console.log('The word: '+word+' does not exist. So adding..');
-                            wordsOfInterestCollectionReference.add( {word: word, failed_count: 1, last_updated: submittedAt} );
+                            console.log('The word: '+failedWord+' does not exist. So adding..');
+                            wordsOfInterestCollectionReference.add( {word: failedWord, failed_count: 1, last_updated: submittedAt} );
                         }
                 })
             })
@@ -112,13 +118,15 @@ class PidiWebServices {
             testResultPacket.passed_words.forEach( passedWord => {
                 let wordsOfInterestCollectionReference = firestore.collection('/users/'+userDocumentReferenceKey+'/words_of_interest');
                 wordsOfInterestCollectionReference.where('word', '==', passedWord).get().then( wordOfInterestSnapshot => {
-                    if (wordOfInterestSnapshot.exists) {
+                    if (wordOfInterestSnapshot.size > 0) {
                         console.log('The PASSED word: '+passedWord+ ' is found among the failed words. So bumping up the count.');
-                        let theWord = wordOfInterestSnapshot.data();
-                        if (!theWord.passed_count) {
-                            theWord.passed_count = 0;
-                        }
-                        wordOfInterestSnapshot.ref.set({passed_count: theWord.passed_count+1, last_updated: submittedAt}, {merge: true}); // update the failed count
+                        wordOfInterestSnapshot.forEach( snap => {
+                            let theWord = snap.data();
+                            if (!theWord.passed_count) {
+                                theWord.passed_count = 0;
+                            }
+                            snap.ref.set({passed_count: theWord.passed_count+1, last_updated: submittedAt}, {merge: true}); // update the failed count
+                        });
                     } // we dont need to worry about else portion since this is a passed word
                 })
 
