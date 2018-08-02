@@ -15,6 +15,7 @@ import NewWords from './NewWords.js';
 import TestWords from './TestWords.js';
 import FlashCardReview from './FlashCardReview.js';
 import SelectUser from './SelectUser.js';
+import ReportCard from './ReportCard.js';
 
 class App extends Component {
     constructor() {
@@ -69,6 +70,7 @@ class App extends Component {
                     <li> <NavLink to="/NewWords">Learn New Words</NavLink></li>
                     <li> <NavLink to="/TestWords">Test Words</NavLink></li>
                     <li> <NavLink to="/FlashCardReview">Flash Cards</NavLink></li>
+                    <li> <NavLink to="/ReportCard">Report</NavLink></li>
                 </ul>
               </div>
               <div className="content">
@@ -83,6 +85,9 @@ class App extends Component {
                   )}/>
                   <Route path="/FlashCardReview"  render={props => (
                       <FlashCardReview selectedUserDocumentId={this.state.selectedUserDocumentId}/>
+                  )}/>
+                  <Route path="/ReportCard"  render={props => (
+                      <ReportCard selectedUserDocumentId={this.state.selectedUserDocumentId}/>
                   )}/>
               </div>
             </div>

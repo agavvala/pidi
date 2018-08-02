@@ -66,14 +66,6 @@ class TestWords extends Component {
     }
 
     submitTest = () => {
-        /*
-        let questions = this.state.questions;
-        let test_result = this.createTestReultsObject();
-        let words_of_interest = test_result.words_of_interest
-        delete test_result.words_of_interest;
-        console.log("submitting test....", test_result, questions, words_of_interest);
-        this.pidiService.saveTestResults("pMGEJiE2LdxE3xgZMxYS", test_result, questions, words_of_interest)
-        */
 
         let testResultPacket = this.createTestResultPacket();
 

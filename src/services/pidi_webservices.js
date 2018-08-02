@@ -151,6 +151,29 @@ class PidiWebServices {
         return array;
     }
 
+
+    //
+    // Fetch Previous Test Records
+    //
+    fetchMostRecentTests(userDocumentReferenceKey, howManyTests, loadPastTests) {
+        let firestore = firebase.firestore();
+        firestore.settings({timestampsInSnapshots: true}); // this will fetch the timestamps in right format
+        let testCollectionReference = firestore.collection('/users/'+userDocumentReferenceKey+'/tests');
+        let testObjectArray = [];
+
+        testCollectionReference.orderBy('submittedAt', 'desc').limit(howManyTests).get().then( testCollectionSnapshot => {
+            testCollectionSnapshot.forEach( testCollectionObject => {
+                let testObject = testCollectionObject.data();
+                testObject.documentId = testCollectionObject.id;
+                //console.log('adding test object: ');
+                //console.log(testObject);
+                testObjectArray.push(testObject);
+            })
+        }).then( ref => {
+            loadPastTests( testObjectArray.reverse() );
+        })
+    }
+
     /*
         Get random "n" test questions.
         Invoke the load test callback
