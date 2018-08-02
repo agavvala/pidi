@@ -35,10 +35,20 @@ class App extends Component {
         //console.log(this.testWords);
     }
 
-    onSelectUser = (e, documentId) => {
+    onSelectUser = (e, documentId, userName) => {
         this.setState( {
-            selectedUserDocumentId : documentId
+            selectedUserDocumentId : documentId,
+            selectedUserName: userName
         })
+    }
+
+    welcomeUser = () => {
+        if (this.state.selectedUserName) {
+            return <div className="text-warning">Welcome {this.state.selectedUserName}!</div>
+
+        } else {
+            return <div>&nbsp;</div>
+        }
     }
 
   render() {
@@ -46,10 +56,14 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <h1 className="App-title">Pidi</h1>
+
         </header>
           <HashRouter>
             <div>
               <div>
+                  <div className="welcome">
+                      {this.welcomeUser()}
+                  </div>
                 <ul className='header'>
                     <li> <NavLink to="/SelectUser">Who Are You?</NavLink></li>
                     <li> <NavLink to="/NewWords">Learn New Words</NavLink></li>

@@ -38,11 +38,11 @@ class SelectUser extends Component {
         });
     }
 
-    onSelectUser = (e, documentId) => {
+    onSelectUser = (e, documentId, userName) => {
         this.setSelectedUser(documentId);
      //   console.log('Props');
      //   console.log(this.props.onSelectUser);
-        this.props.onSelectUser(e, documentId); // pass it parent as well
+        this.props.onSelectUser(e, documentId, userName); // pass it parent as well
     }
 
 
