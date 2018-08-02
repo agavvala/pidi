@@ -81,8 +81,8 @@ class PidiWebServices {
         // update the test object as specified
         testDocumentReference.set( {
             status: 'completed',
-            answered_correct: testResultPacket.failed_words.length,
-            answered_wrong: testResultPacket.passed_words.length,
+            answered_correct: testResultPacket.passed_words.length,
+            answered_wrong: testResultPacket.failed_words.length,
             submittedAt: submittedAt
         }, {merge: true}).then( ref => {
             // handle all failed words
