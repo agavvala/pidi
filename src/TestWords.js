@@ -24,10 +24,11 @@ class TestWords extends Component {
                 this.pidiService.fetchTest(this.props.selectedUserDocumentId, DEFAULT_ASSESSMENT_QUESTION_COUNT, this.startTest)
             } else if (this.props.linkState && this.props.linkState.testQuestions){
                 console.log('Found questions in the context');
+                console.log('Test Document Id: '+this.props.linkState.testDocumentId);
                 this.setState( {
                     currentIndex: 0,
                     previousTest: true,
-                    documentId: this.props.selectedUserDocumentId,
+                    testDocumentId: this.props.linkState.testDocumentId,
                     howMany: this.props.linkState.testQuestions.length,
                     questions: this.props.linkState.testQuestions
                 })
@@ -44,7 +45,7 @@ class TestWords extends Component {
         // result.data[0].choices.map((v, i) => {console.log(v)})
         this.setState({
             currentIndex: 0,
-            documentId: result.documentId,
+            testDocumentId: result.documentId,
             howMany: result.howMany,
             questions: result.words
         });
@@ -87,7 +88,7 @@ class TestWords extends Component {
 
         //testResultPacket.failed_words = [ 'rye', 'abduct' ];
 
-        this.pidiService.submitTest(this.props.selectedUserDocumentId, this.state.documentId, testResultPacket, this.onSubmittedSuccess, this.onSubmittedFailure)
+        this.pidiService.submitTest(this.props.selectedUserDocumentId, this.state.testDocumentId, testResultPacket, this.onSubmittedSuccess, this.onSubmittedFailure)
 
     }
 

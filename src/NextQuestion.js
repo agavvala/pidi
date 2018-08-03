@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-var FontAwesome = require('react-fontawesome');
+//var FontAwesome = require('react-fontawesome');
 
 class NextQuestion extends Component{
     constructor(props){

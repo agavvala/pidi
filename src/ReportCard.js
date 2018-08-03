@@ -49,7 +49,7 @@ class ReportCard extends Component {
                             pathname: '/TestWords',
                             search: '',
                             hash: '',
-                            state: { testQuestions:  testObject.words }}}>
+                            state: { testQuestions:  testObject.words, testDocumentId: testObject.documentId }}}>
                         {testObject.howMany} WORD TEST
                        </Link>
                     </div>
