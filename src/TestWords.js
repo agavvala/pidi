@@ -151,8 +151,16 @@ class TestWords extends Component {
             //console.log('Current Index: '+this.state.currentIndex);
             //console.log('WORD at current index: '+this.state.questions[this.state.currentIndex].word);
             return (
-                <div>
+                <div className="row">
+
                     {this.previousTest()}
+
+                    <div className="parent">
+                        <PreviousQuestion index={this.state.currentIndex}
+                                          onPreviousQuestion={this.previousQuestion}
+                        />
+                    </div>
+                    <div id="questionBox">
                     {/*<h4>Test your knowledge</h4>*/}
                     <Question key={this.state.questions[this.state.currentIndex]}
                               question={this.state.questions[this.state.currentIndex].word.word}
@@ -165,20 +173,6 @@ class TestWords extends Component {
                         <div className="col-sm-3 col-md-3">
                             <ul className="nav nav-pills">
                                 <li>
-                                    <PreviousQuestion index={this.state.currentIndex}
-                                                      onPreviousQuestion={this.previousQuestion}
-                                    />
-                                </li>
-                                <li>
-                                    {/*<h6><strong>{this.state.currentIndex + 1}/{this.state.howMany}</strong></h6>*/}
-                                </li>
-                                <li>
-                                    <NextQuestion index={this.state.currentIndex}
-                                                  maxQuestions={this.state.howMany}
-                                                  onNextQuestion={this.nextQuestion}
-                                    />
-                                </li>
-                                <li>
                                     <SubmitTest isDisabled={this.shouldDisableSubmit()}
                                                 pendingCount={this.pendingQuestionCount()}
                                                 submitHandle={this.submitTest}/>
@@ -186,6 +180,14 @@ class TestWords extends Component {
                             </ul>
                         </div>
                     </div>
+                    </div>
+                    <div className="parent">
+                        <NextQuestion index={this.state.currentIndex}
+                                      maxQuestions={this.state.howMany}
+                                      onNextQuestion={this.nextQuestion}
+                        />
+                    </div>
+
                 </div>
             );
         }else{
