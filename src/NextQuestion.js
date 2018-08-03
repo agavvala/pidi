@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+var FontAwesome = require('react-fontawesome');
 
 class NextQuestion extends Component{
     constructor(props){
@@ -10,7 +11,9 @@ class NextQuestion extends Component{
             return null;
         }
         return(
-            <button className='button btn btn-primary' onClick={this.props.onNextQuestion}>&gt;</button>
+            <button className='button btn btn-primary' onClick={this.props.onNextQuestion}>
+                <i className="arrow right"></i>
+            </button>
         );
     }
 }

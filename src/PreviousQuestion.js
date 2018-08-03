@@ -11,7 +11,9 @@ class PreviousQuestion extends Component{
             return null;
         }
         return(
-            <button className='button btn btn-primary' onClick={this.props.onPreviousQuestion}>&lt;</button>
+            <button className='button btn btn-primary' onClick={this.props.onPreviousQuestion}>
+                <i className="arrow left"></i>
+            </button>
         );
     }
 }
