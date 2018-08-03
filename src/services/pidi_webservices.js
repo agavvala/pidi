@@ -170,7 +170,7 @@ class PidiWebServices {
                 testObjectArray.push(testObject);
             })
         }).then( ref => {
-            loadPastTests( testObjectArray.reverse() );
+            loadPastTests( testObjectArray );
         })
     }
 

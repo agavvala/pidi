@@ -71,3 +71,11 @@ h1, h2, p, ul, li {
 .active {
   background-color: #0099FF;
 }
+
+.cadetbluebg {
+  background-color: cadetblue;
+}
+
+.darksalmonbg {
+  background-color: darksalmon;
+}

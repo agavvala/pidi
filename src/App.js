@@ -81,7 +81,7 @@ class App extends Component {
                       <NewWords selectedUserDocumentId={this.state.selectedUserDocumentId}/>
                   )}/>
                   <Route path="/TestWords"  render={props => (
-                      <TestWords selectedUserDocumentId={this.state.selectedUserDocumentId}/>
+                      <TestWords selectedUserDocumentId={this.state.selectedUserDocumentId} linkState={props.location.state}/>
                   )}/>
                   <Route path="/FlashCardReview"  render={props => (
                       <FlashCardReview selectedUserDocumentId={this.state.selectedUserDocumentId}/>

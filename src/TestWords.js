@@ -12,12 +12,28 @@ class TestWords extends Component {
     pidiService = new PidiWebServices()
     constructor(props){
         super(props);
-        this.state = {answers: [], testCompleted: false};
+        this.state = {answers: [], previousTest: false, testCompleted: false};
     }
 
     componentDidMount() {
+        console.log('TESTWORDS: componentDidMount');
+        console.log('Link State '); console.log(this.props.linkState);
         if (this.props.selectedUserDocumentId) {
-            this.pidiService.fetchTest(this.props.selectedUserDocumentId, DEFAULT_ASSESSMENT_QUESTION_COUNT, this.startTest)
+            if (!this.props.linkState) { // if questions are not loaded yet
+                console.log('TESTWORDS: No property named testQuestions so loading from the database..');
+                this.pidiService.fetchTest(this.props.selectedUserDocumentId, DEFAULT_ASSESSMENT_QUESTION_COUNT, this.startTest)
+            } else if (this.props.linkState && this.props.linkState.testQuestions){
+                console.log('Found questions in the context');
+                this.setState( {
+                    currentIndex: 0,
+                    previousTest: true,
+                    documentId: this.props.selectedUserDocumentId,
+                    howMany: this.props.linkState.testQuestions.length,
+                    questions: this.props.linkState.testQuestions
+                })
+            }
+        } else {
+            console.log('TESTWORDS: THERE IS selectedUserDocumentId in the PROPS: '+this.props.selectedUserDocumentId);
         }
     }
 
@@ -73,7 +89,6 @@ class TestWords extends Component {
 
         this.pidiService.submitTest(this.props.selectedUserDocumentId, this.state.documentId, testResultPacket, this.onSubmittedSuccess, this.onSubmittedFailure)
 
-
     }
 
     onSubmittedSuccess = (testResultPacket) => {
@@ -112,6 +127,14 @@ class TestWords extends Component {
         }
     }
 
+    previousTest() {
+        if (this.state.previousTest) {
+            return <div class="text-primary">Repeating a Previous Test<br/><br/></div>
+        } else {
+            return <div></div>;
+        }
+    }
+
     render(){
         if (!this.props.selectedUserDocumentId) {
             return (
@@ -123,8 +146,13 @@ class TestWords extends Component {
             );
         }
         if(!this.state.testCompleted) {
+            //console.log('Questions ARRAY');
+            //console.log(this.state.questions);
+            //console.log('Current Index: '+this.state.currentIndex);
+            //console.log('WORD at current index: '+this.state.questions[this.state.currentIndex].word);
             return (
                 <div>
+                    {this.previousTest()}
                     {/*<h4>Test your knowledge</h4>*/}
                     <Question key={this.state.questions[this.state.currentIndex]}
                               question={this.state.questions[this.state.currentIndex].word.word}
