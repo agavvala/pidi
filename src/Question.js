@@ -20,7 +20,7 @@ class Question extends Component {
                 {this.props.choices.map(choice => (
                     <li key={choice}>
                         <label>
-                            <input type="radio" name={this.props.question} value={choice}
+                            <input className="form-check-input" type="radio" name={this.props.question} value={choice}
                                    checked={choice === this.props.currSelection}
                                    onChange={this.props.onAnswerSelect}/>&nbsp;
                             {choice}

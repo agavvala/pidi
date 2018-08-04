@@ -117,9 +117,9 @@ class TestWords extends Component {
         for (let i = 0; i < totalQuestions; i++) {
 
             if (questions[i].word.meaning == userAnswers[i]) {
-                passedWords.push(questions[i].word.word);
+                passedWords.push({ word: questions[i].word.word, meaning: questions[i].word.meaning});
             } else {
-                failedWords.push(questions[i].word.word);
+                failedWords.push({ word: questions[i].word.word, meaning: questions[i].word.meaning});
             }
         }
         return {

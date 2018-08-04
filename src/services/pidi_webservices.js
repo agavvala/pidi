@@ -90,7 +90,7 @@ class PidiWebServices {
                 let wordsOfInterestCollectionReference = firestore.collection('/users/'+userDocumentReferenceKey+'/words_of_interest');
                 console.log(wordsOfInterestCollectionReference);
                 let theWordExits = false;
-                wordsOfInterestCollectionReference.where('word', '==', failedWord).get().then( wordOfInterestSnapshot => {
+                wordsOfInterestCollectionReference.where('word', '==', failedWord.word).get().then( wordOfInterestSnapshot => {
                     //console.log('Found a snapshot..');
                     //console.log('Snapshot size: '+wordOfInterestSnapshot.size);
                     if (wordOfInterestSnapshot.size > 0) {
@@ -98,7 +98,7 @@ class PidiWebServices {
                             let theWord = snap.data();
                             console.log('Failed Word');
                             console.log(theWord);
-                            console.log('The FAILED word: ' + failedWord + ' is found among the failed words. So bumping up the count.');
+                            console.log('The FAILED word: ' + failedWord.word + ' is found among the failed words. So bumping up the count.');
                             snap.ref.set({
                                 failed_count: theWord.failed_count + 1,
                                 last_updated: submittedAt
@@ -109,7 +109,7 @@ class PidiWebServices {
                 }).then( ref => {
                         if (!theWordExits) {
                             console.log('The word: '+failedWord+' does not exist. So adding..');
-                            wordsOfInterestCollectionReference.add( {word: failedWord, failed_count: 1, last_updated: submittedAt} );
+                            wordsOfInterestCollectionReference.add( {word: failedWord.word, meaning: failedWord.meaning, failed_count: 1, last_updated: submittedAt} );
                         }
                 })
             })
@@ -117,9 +117,9 @@ class PidiWebServices {
             // handle all passed words
             testResultPacket.passed_words.forEach( passedWord => {
                 let wordsOfInterestCollectionReference = firestore.collection('/users/'+userDocumentReferenceKey+'/words_of_interest');
-                wordsOfInterestCollectionReference.where('word', '==', passedWord).get().then( wordOfInterestSnapshot => {
+                wordsOfInterestCollectionReference.where('word', '==', passedWord.word).get().then( wordOfInterestSnapshot => {
                     if (wordOfInterestSnapshot.size > 0) {
-                        console.log('The PASSED word: '+passedWord+ ' is found among the failed words. So bumping up the count.');
+                        console.log('The PASSED word: '+passedWord.word+ ' is found among the failed words. So bumping up the count.');
                         wordOfInterestSnapshot.forEach( snap => {
                             let theWord = snap.data();
                             if (!theWord.passed_count) {
@@ -173,6 +173,27 @@ class PidiWebServices {
             loadPastTests( testObjectArray );
         })
     }
+
+    //
+    // Fetch Previous Test Records
+    //
+    fetchWordsOfInterest(userDocumentReferenceKey, loadWordsOfInterest) {
+        let firestore = firebase.firestore();
+        firestore.settings({timestampsInSnapshots: true}); // this will fetch the timestamps in right format
+        let wordsOfInterestReference = firestore.collection('/users/'+userDocumentReferenceKey+'/words_of_interest');
+        let wordsOfInterestArray = [];
+
+        wordsOfInterestReference.orderBy('last_updated', 'desc').get().then( wordsOfInterestSnapshot => {
+            wordsOfInterestSnapshot.forEach( wordOfInterestObjectRef => {
+                let wordOfInterestObject = wordOfInterestObjectRef.data();
+                wordsOfInterestArray.push(wordOfInterestObject);
+            })
+        }).then( ref => {
+            loadWordsOfInterest( wordsOfInterestArray );
+        })
+    }
+
+
 
     /*
         Get random "n" test questions.
