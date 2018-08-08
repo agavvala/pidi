@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import PidiWebServices from "./services/pidi_webservices";
 import {DEFAULT_ASSESSMENT_QUESTION_COUNT, DEFAULT_USER_DOCUMENT_REFERENCE} from './Wellknown'
 import UserName from './UserName.js'
-
+import AonawareServices from './services/AonawareServices'
 class SelectUser extends Component {
     constructor() {
         super();
         this.pidiWebServices = new PidiWebServices();
-
+        this.aonawareServices = new AonawareServices();
         this.state = { };
     }
 
@@ -45,7 +45,10 @@ class SelectUser extends Component {
         this.props.onSelectUser(e, documentId, userName); // pass it parent as well
     }
 
-
+    loadData = () => {
+        console.log('loading....')
+        this.aonawareServices.loadExtendedWordDefinitions()
+    }
 
 
     render() {
@@ -68,6 +71,7 @@ class SelectUser extends Component {
                             </div>
                         ))
                     }
+                    {/*<button onClick={this.loadData}>Load Data</button>*/}
                 </div>
 
             );

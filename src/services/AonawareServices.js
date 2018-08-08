@@ -1,6 +1,9 @@
+
+import PidiWebServices from './pidi_webservices'
+import {AONAWARE_ENDPOINT} from '../Wellknown'
+
 const request = require('request');
 const parseString = require('xml2js').parseString;
-import {AONAWARE_ENDPOINT} from '../Wellknown'
 
 class AonawareServices {
     fetchWordInformation(word){
@@ -21,6 +24,21 @@ class AonawareServices {
             console.log(wordDefinitions)
             return wordDefinitions;
         });
+    }
+
+    loadExtendedWordDefinitions(){
+        let pidi = new PidiWebServices()
+        let db = pidi.getFirestore();
+        let allWords = db.collection("words");
+        allWords.get().then( allWordsSnapshot => {
+            allWordsSnapshot.forEach( wordDocument => {
+                let word = wordDocument.data();
+                let extendedWordDefinitions = this.fetchWordInformation(word.word)
+                console.log(extendedWordDefinitions)
+            })
+        }).then( ref => {
+        })
+
     }
 }
 
