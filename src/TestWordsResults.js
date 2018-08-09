@@ -7,7 +7,12 @@ class TestWordsResults extends Component {
 
     result = () => {
         const test_results= this.props.testResult;
-        let percent =  (test_results.answered_right/test_results.number_of_questions)*100;
+        console.log('TEST Results: ');
+        console.log(test_results);
+        let failedWordCount = test_results.failed_words.length;
+        let passedWordCount = test_results.passed_words.length;
+        let percent =  (passedWordCount/(passedWordCount+failedWordCount))*100;
+        console.log(percent);
         if(percent === 100){
             return "Awesome Job!"
         }else if(percent > 80){
