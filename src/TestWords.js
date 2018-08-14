@@ -20,8 +20,13 @@ class TestWords extends Component {
         console.log('Link State '); console.log(this.props.linkState);
         if (this.props.selectedUserDocumentId) {
             if (!this.props.linkState) { // if questions are not loaded yet
-                console.log('TESTWORDS: No property named testQuestions so loading from the database..');
-                this.pidiService.fetchTest(this.props.selectedUserDocumentId, DEFAULT_ASSESSMENT_QUESTION_COUNT, this.startTest)
+                if(this.props.reviseWords){
+                    console.log('Loading new revision test....');
+                    this.pidiService.fetchRevisionTest(this.props.selectedUserDocumentId, DEFAULT_ASSESSMENT_QUESTION_COUNT, this.startTest)
+                }else{
+                    console.log('TESTWORDS: No property named testQuestions so loading from the database..');
+                    this.pidiService.fetchTest(this.props.selectedUserDocumentId, DEFAULT_ASSESSMENT_QUESTION_COUNT, this.startTest)
+                }
             } else if (this.props.linkState && this.props.linkState.testQuestions){
                 console.log('Found questions in the context');
                 console.log('Test Document Id: '+this.props.linkState.testDocumentId);

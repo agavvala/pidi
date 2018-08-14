@@ -69,6 +69,7 @@ class App extends Component {
                     <li> <NavLink to="/SelectUser">Who Are You?</NavLink></li>
                     <li> <NavLink to="/NewWords">Learn New Words</NavLink></li>
                     <li> <NavLink to="/TestWords">Test Words</NavLink></li>
+                    <li> <NavLink to="/ReviseWords">Revise Words</NavLink></li>
                     <li> <NavLink to="/FlashCardReview">Flash Cards</NavLink></li>
                     <li> <NavLink to="/ReportCard">Report</NavLink></li>
                 </ul>
@@ -82,6 +83,9 @@ class App extends Component {
                   )}/>
                   <Route path="/TestWords"  render={props => (
                       <TestWords selectedUserDocumentId={this.state.selectedUserDocumentId} linkState={props.location.state}/>
+                  )}/>
+                  <Route path="/ReviseWords"  render={props => (
+                      <TestWords selectedUserDocumentId={this.state.selectedUserDocumentId} reviseWords={true} linkState={props.location.state}/>
                   )}/>
                   <Route path="/FlashCardReview"  render={props => (
                       <FlashCardReview selectedUserDocumentId={this.state.selectedUserDocumentId}/>

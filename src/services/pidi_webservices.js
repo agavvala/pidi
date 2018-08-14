@@ -193,6 +193,64 @@ class PidiWebServices {
         })
     }
 
+    /*
+        Get random questions for the user from his past tests.
+            - If there is existing test, always return it (either revision test or new)
+            - If no existing data available return empty set
+            - Assuming that if data exists that it will be at least 10
+     */
+    fetchRevisionTest(userDocumentReferenceKey, howMany, loadDataSet) {
+        let fireStore = firebase.firestore();
+        fireStore.settings({timestampsInSnapshots: true});
+
+        // does the user already have a pending test?
+        let userDocumentReference = fireStore.collection("users").doc(userDocumentReferenceKey);
+        let testCollectionReference = userDocumentReference.collection("tests");
+        let existingPendingTest = false;
+
+        testCollectionReference.where('status', '==', 'pending').get().then(snapshot =>{
+            snapshot.forEach(testObject => {
+                console.log('Found AN EXISTING one');
+
+                existingPendingTest = true;
+                var testDataStrcuture = testObject.data();
+                testDataStrcuture.documentId = testObject.id;
+                loadDataSet(testDataStrcuture);
+            })
+        }).then(snapshot => {
+            if(!existingPendingTest){
+                let allWords = []
+                let randomWords = [];
+
+                this.fetchMostRecentTests(userDocumentReferenceKey, 10000, (testObjectArray) => {
+                    console.log('found previous tests:', testObjectArray.length)
+                    testObjectArray.forEach(testObject => {
+                        //console.log(testObject.words)
+                        allWords.push.apply(allWords, testObject.words);
+                    });
+                    //console.log(allWords);
+                    let collectedSoFar = 0;
+                    let seen = {};
+                    while (collectedSoFar < howMany) {
+                        let randomIndex = Math.floor(Math.random() * allWords.length);
+                        if (!seen[randomIndex]) {
+                            let choices = this.getChoices(3, allWords, randomIndex); // get 3 random choices
+                            choices.push(allWords[randomIndex].meaning);
+                            randomWords.push({word: allWords[randomIndex], choices: this.shuffleArray(choices)});
+                            seen[randomIndex] = randomIndex;
+                            collectedSoFar++;
+                        }
+                    }
+                    let testDataObject = {status: 'pending', howMany: howMany, words: randomWords, lastAttempted: new Date()};
+                    console.log(testDataObject)
+                     userDocumentReference.collection("tests").add(testDataObject)
+                            /*.then((s) => {
+                                 loadDataSet(testDataObject)
+                             })*/
+                })
+            }
+        })
+    }
 
 
     /*
