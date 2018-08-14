@@ -225,6 +225,11 @@ class PidiWebServices {
                         //console.log(testObject.words)
                         allWords.push.apply(allWords, testObject.words);
                     });
+
+                    if(allWords.length === 0 || allWords.length < howMany){
+                        throw new Error('not enough questions to revise')
+                    }
+
                     //console.log(allWords);
                     let collectedSoFar = 0;
                     let seen = {};
@@ -238,8 +243,10 @@ class PidiWebServices {
                     }
                     let testDataObject = {status: 'pending', howMany: howMany, words: randomWords, lastAttempted: new Date()};
                     console.log(testDataObject);
-                    let result = this.saveNewTest(userDocumentReferenceKey, testDataObject)
-                    loadDataSet(result)
+                    this.saveNewTest(userDocumentReferenceKey, testDataObject).then(testDataReference => {
+                        testDataObject.documentId = testDataReference.id;
+                        loadDataSet(testDataObject);
+                    })
                 })
             }
         })
@@ -304,8 +311,6 @@ class PidiWebServices {
                 });
 
             }});
-
-
     }
 
 
