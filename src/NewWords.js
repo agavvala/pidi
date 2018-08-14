@@ -10,12 +10,21 @@ class NewWords extends Component {
         super();
         this.pidiWebServices = new PidiWebServices();
 
-        this.state = { };
+        this.state = {
+        };
     }
 
     componentDidMount() {
         if (this.props.selectedUserDocumentId) {
             this.pidiWebServices.fetchTest(this.props.selectedUserDocumentId, DEFAULT_ASSESSMENT_QUESTION_COUNT, this.startLearning.bind(this))
+        }
+    }
+
+    getDefinitionList() {
+        if (this.state.activeWord && this.state.activeWord.word && this.state.activeWord.word.definitions) {
+            return this.state.activeWord.word.definitions;
+        } else {
+            return [];
         }
     }
 
@@ -43,6 +52,13 @@ class NewWords extends Component {
     setActiveWord(theIndex) {
         console.log('Active Word: ' + this.state.questions[theIndex]);
         this.setState({activeWord: this.state.questions[theIndex], currentIndex: theIndex });
+    }
+
+    formatDefinition(aDefinition) {
+        //console.log('DEF: '+aDefinition);
+        //let word = aDefinition.replace(/\n/g, '<br>');
+        //console.log('DEF: '+word);
+        return aDefinition;
     }
 
 
@@ -82,7 +98,12 @@ class NewWords extends Component {
                             />
                         </div>
                     </div>
-                    <div className="row">
+                    <div className="row mt-5 mb-5">
+                        <div className="col-3 justify-content-lg-end">
+                        </div>
+                        <div className="col-6 text-justify"><pre>{this.getDefinitionList().map( def => this.formatDefinition(def))}</pre></div>
+                        <div className="col-3 justify-content-lg-start">
+                        </div>
                     </div>
                 </div>
             );
