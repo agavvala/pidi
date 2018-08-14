@@ -5,17 +5,14 @@ class PidiWebServices {
     // get random word meanings
     // skipIndex - will avoid words that have been seen
     getChoices(howMany, allWords, skipIndex) {
-        var collectedSoFar = 0;
-        var choices = [];
-
+        let collectedSoFar = 0;
+        let choices = [];
         while (collectedSoFar < howMany) {
-            var randomIndex = Math.floor(Math.random() * allWords.length);
+            let randomIndex = Math.floor(Math.random() * allWords.length);
             if (randomIndex !== skipIndex) { // avoid this word meaning
-                choices.push(allWords[randomIndex].meaning);
                 collectedSoFar++;
             }
         }
-
         return choices;
     }
 
@@ -234,19 +231,15 @@ class PidiWebServices {
                     while (collectedSoFar < howMany) {
                         let randomIndex = Math.floor(Math.random() * allWords.length);
                         if (!seen[randomIndex]) {
-                            let choices = this.getChoices(3, allWords, randomIndex); // get 3 random choices
-                            choices.push(allWords[randomIndex].meaning);
-                            randomWords.push({word: allWords[randomIndex], choices: this.shuffleArray(choices)});
+                            randomWords.push(allWords[randomIndex])
                             seen[randomIndex] = randomIndex;
                             collectedSoFar++;
                         }
                     }
                     let testDataObject = {status: 'pending', howMany: howMany, words: randomWords, lastAttempted: new Date()};
-                    console.log(testDataObject)
-                     userDocumentReference.collection("tests").add(testDataObject)
-                            /*.then((s) => {
-                                 loadDataSet(testDataObject)
-                             })*/
+                    console.log(testDataObject);
+                    let result = this.saveNewTest(userDocumentReferenceKey, testDataObject)
+                    loadDataSet(result)
                 })
             }
         })
