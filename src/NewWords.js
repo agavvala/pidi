@@ -11,6 +11,7 @@ class NewWords extends Component {
         this.pidiWebServices = new PidiWebServices();
 
         this.state = {
+            hidMeaningFlag: false
         };
     }
 
@@ -61,8 +62,38 @@ class NewWords extends Component {
         return aDefinition;
     }
 
+    onChangeHideMeaning = (e) => {
+        let checkStatus = e.target.checked;
+        if (checkStatus) {
+            console.log('Checked');
+            this.setState( { hideMeaningFlag: true });
+        } else {
+            console.log('Not checked');
+            this.setState( { hideMeaningFlag: false });
+        }
+    }
 
 
+
+    showMeaning() {
+        console.log('showMeaning()')
+        if (!this.state.hideMeaningFlag) {
+            console.log('showing..');
+            return this.state.activeWord.word.meaning;
+        } else {
+            return "No meaning";
+        }
+    }
+
+    showDefinitions() {
+        console.log('showDefinitons()')
+        if (!this.state.hideMeaningFlag) {
+            console.log('showing..');
+            return this.getDefinitionList().map( def => this.formatDefinition(def) );
+        } else {
+            return [];
+        }
+    }
 
     render() {
         if (!this.props.selectedUserDocumentId) {
@@ -78,7 +109,12 @@ class NewWords extends Component {
             return (
                 <div className="container">
                     <div className="row">
-                        <div className="col-12">
+                        <div className="col-12 justify-content-center text-muted">
+                            <input type="checkbox"  className="form-check-input" onClick={this.onChangeHideMeaning}/> Hide the meaning by default
+                        </div>
+                    </div>
+                    <div className="row mt-10">
+                        <div className="col-12 justify-content-center">
                             <h2>{this.state.currentIndex + 1}. {this.state.activeWord.word.word}</h2>
                         </div>
                     </div>
@@ -90,7 +126,9 @@ class NewWords extends Component {
                                               onPreviousQuestion={this.previousQuestion.bind(this)}
                             />
                         </div>
-                        <div className="col-6">{this.state.activeWord.word.meaning}</div>
+                        <div className="col-6">
+                            {this.showMeaning()}
+                        </div>
                         <div className="col-3 justify-content-lg-start">
                             <NextQuestion index={this.state.currentIndex}
                                           maxQuestions={this.state.howMany}
@@ -101,7 +139,11 @@ class NewWords extends Component {
                     <div className="row mt-5 mb-5">
                         <div className="col-3 justify-content-lg-end">
                         </div>
-                        <div className="col-6 text-justify"><pre>{this.getDefinitionList().map( def => this.formatDefinition(def))}</pre></div>
+                        <div className="col-6 text-justify">
+                            <pre>
+                                {this.showDefinitions()}
+                            </pre>
+                        </div>
                         <div className="col-3 justify-content-lg-start">
                         </div>
                     </div>

@@ -79,3 +79,7 @@ h1, h2, p, ul, li {
 .darksalmonbg {
   background-color: darksalmon;
 }
+
+.shaded {
+  background: linear-gradient(#0099FF, #9fcdff);
+}

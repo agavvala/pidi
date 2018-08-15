@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import PidiWebServices from "./services/pidi_webservices";
 import {DEFAULT_ASSESSMENT_QUESTION_COUNT, DEFAULT_USER_DOCUMENT_REFERENCE} from './Wellknown'
 import UserName from './UserName.js'
-import AonawareServices from './services/AonawareServices'
+//import AonawareServices from './services/AonawareServices'
 class SelectUser extends Component {
     constructor() {
         super();
         this.pidiWebServices = new PidiWebServices();
-        this.aonawareServices = new AonawareServices();
+        //this.aonawareServices = new AonawareServices();
         this.state = { };
     }
 
